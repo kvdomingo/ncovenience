@@ -5,7 +5,7 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import "./Map.css";
 import axios from "axios";
-import api from "../../utils/Endpoints";
+import api from "../../api";
 
 const { REACT_APP_MAPBOX_ACCESS_TOKEN } = process.env;
 

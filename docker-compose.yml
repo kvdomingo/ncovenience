@@ -1,11 +1,46 @@
 version: "3.8"
 
+networks:
+  gateway:
+    external: true
+
 services:
-  app:
+  backend:
     build:
       context: .
-      target: prod
-    image: kvdomingo/ncovenience:latest
+      target: dev
+    image: kvdomingo/ncovenience-api:latest
     env_file: .env
-    ports:
-      - ${PORT}:${PORT}
+    volumes:
+      - .:/backend
+
+  frontend:
+    build: ./web/app
+    image: kvdomingo/ncovenience-app:latest
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling
+      - WDS_SOCKET_PORT=0
+      - REACT_APP_MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
+    volumes:
+      - ./web/app:/web
+
+  proxy:
+    image: bitnami/nginx:latest
+    environment:
+      - NGINX_HTTP_PORT_NUMBER=${HTTP_PORT}
+    volumes:
+      - ./proxy/nginx.conf:/opt/bitnami/nginx/conf/server_blocks/ncovenience.conf:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ncovenience.rule=Host(`ncovenience.localhost`)"
+      - "traefik.http.routers.ncovenience.entrypoints=http"
+      - "traefik.docker.network=gateway"
+      - "traefik.http.services.ncovenience.loadbalancer.server.port=${HTTP_PORT}"
+    restart: unless-stopped
+    networks:
+      - default
+      - gateway

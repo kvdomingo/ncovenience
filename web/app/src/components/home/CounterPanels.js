@@ -10,7 +10,7 @@ import {
   MDBIcon as Icon,
 } from "mdbreact";
 import Loading from "../shared/Loading";
-import api from "../../utils/Endpoints";
+import api from "../../api";
 
 function numberWithCommas(num) {
   if (typeof num !== "undefined") {

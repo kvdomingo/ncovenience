@@ -3,7 +3,7 @@ import { MDBCard as Card, MDBCardHeader as CardHeader, MDBCardBody as CardBody }
 import Loading from "../shared/Loading";
 import { HorizontalBar } from "react-chartjs-2";
 import PropTypes from "prop-types";
-import api from "../../utils/Endpoints";
+import api from "../../api";
 
 export default class CasesLinePlot extends React.Component {
   static propTypes = {
