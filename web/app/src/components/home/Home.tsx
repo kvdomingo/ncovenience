@@ -1,5 +1,5 @@
 import Helmet from "react-helmet";
-import { MDBCol as Col, MDBContainer as Container, MDBRow as Row, MDBTypography as Type } from "mdbreact";
+import { MDBCol as Col, MDBContainer as Container, MDBRow as Row } from "mdbreact";
 import CounterPanels from "./CounterPanels";
 import Map from "./Map";
 import PlotPanels from "./PlotPanels";
@@ -16,9 +16,6 @@ function Home() {
         </Col>
         <Col>
           <Container className="my-4">
-            <Type tag="h1" variant="display-4" className="my-4 text-left">
-              Dashboard
-            </Type>
             <div className="text-center">
               <CounterPanels />
               <PlotPanels />

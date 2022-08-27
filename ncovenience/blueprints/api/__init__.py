@@ -1,1 +1,1 @@
-from .api import api
+from .routes import api

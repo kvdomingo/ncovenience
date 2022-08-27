@@ -1,9 +1,9 @@
 import os.path
 
-from cache import cache
 from flask import Flask, send_from_directory
 
 from .blueprints import api
+from .cache import cache
 from .config import BASE_DIR, PYTHON_ENV, SECRET_KEY
 
 

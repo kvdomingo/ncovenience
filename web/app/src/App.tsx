@@ -1,33 +1,26 @@
-import { Suspense, useEffect } from "react";
-import ReactGA from "react-ga";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
-import Routes from "./Routes";
 import Footer from "./components/shared/Footer";
 import Loading from "./components/shared/Loading";
-import Navbar from "./components/shared/Navbar";
+import GAUtil from "./components/utils/GAUtil";
 
-const { NODE_ENV } = process.env;
+const Home = lazy(() => import("./components/home/Home"));
+const Docs = lazy(() => import("./components/docs/Docs"));
+const Err404 = lazy(() => import("./components/shared/NotFound"));
 
 function App() {
-  const location = useLocation();
-
-  useEffect(() => {
-    if (NODE_ENV === "production") {
-      ReactGA.initialize("UA-162676656-1");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (NODE_ENV === "production") {
-      ReactGA.pageview(`${location.pathname}${location.search}`);
-    }
-  }, [location.pathname, location.search]);
-
   return (
     <Router>
-      <Navbar />
-      <Suspense fallback={<Loading />}>{Routes}</Suspense>
+      <GAUtil />
+      {/*<Navbar />*/}
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/docs" element={<Docs />} />
+          <Route element={<Err404 />} />
+        </Routes>
+      </Suspense>
       <Footer />
     </Router>
   );

@@ -1,9 +1,19 @@
 from datetime import datetime
 
 import geojson
-from django.core.cache import cache
+import pandas as pd
 
-from ncovenience.api import data
+from ...cache import cache
+from . import data
+
+
+class GeoJSONNATEncoder(geojson.GeoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, type(pd.NaT)):
+            return None
+        elif obj.__class__.__name__ == "Timestamp":
+            return str(obj)
+        return super().default(obj)
 
 
 def check_last_updated():
@@ -22,7 +32,7 @@ def check_last_updated():
     return last_updated.strftime("%H:%M, %d %b %Y")
 
 
-def df_to_geojson(df, **kwargs):
+def df_to_geojson(df: pd.DataFrame, **kwargs):
     features = []
 
     def insert_features(row):
@@ -62,7 +72,7 @@ def df_to_geojson(df, **kwargs):
                 )
 
     df.apply(insert_features, axis=1)
-    return geojson.dumps(geojson.FeatureCollection(features, separators=(",", ":")), **kwargs)
+    return geojson.dumps(geojson.FeatureCollection(features, separators=(",", ":")), cls=GeoJSONNATEncoder, **kwargs)
 
 
 def date_to_datetime(df):

@@ -6,6 +6,9 @@ const axiosInstance = axios.create({ baseURL });
 
 const api = {
   data: {
+    getProvinces() {
+      return axios.get("https://raw.githubusercontent.com/macoymejia/geojsonph/master/Province/Provinces.json");
+    },
     cases() {
       return axiosInstance.get("/cases");
     },

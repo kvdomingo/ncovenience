@@ -19,6 +19,7 @@ whitenoise = "^6.2.0"
 Flask = "^2.2.2"
 Flask-Caching = "^2.0.1"
 loguru = "^0.6.0"
+matplotlib = "^3.5.3"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
