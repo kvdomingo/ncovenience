@@ -15,34 +15,31 @@ function MapView() {
     lat: 12.5,
     zoom: 4.5,
   });
-  const [provinces, setProvinces] = useState<any[]>([]);
-  const [cases, setCases] = useState<any[]>([]);
   const mapContainerRef = useRef<any>(null!);
   const mapRef = useRef<Map>(null!);
+
+  useEffect(() => {
+    initMap();
+  }, []);
 
   useEffect(() => {
     getProvinces();
   }, []);
 
-  useEffect(() => {
-    getCases();
-  }, [provinces]);
-
-  useEffect(() => {
-    initMap();
-  }, [cases]);
-
   function getProvinces() {
     api.data
       .getProvinces()
-      .then(res => setProvinces(res.data))
+      .then(res => {
+        initProvinces(res.data);
+        getCases();
+      })
       .catch(err => console.error(`Provinces failed to load:`, err.message));
   }
 
   function getCases() {
     api.data
       .cases()
-      .then(res => setCases(res.data))
+      .then(res => initCases(res.data))
       .catch(err => console.error(`Cases failed to load: ${err.message}`));
   }
 
@@ -77,17 +74,10 @@ function MapView() {
         zoom: mapRef.current.getZoom(),
       });
     });
+  }
 
+  function initProvinces(provinces: any) {
     mapRef.current.on("load", () => {
-      mapRef.current.addSource("cases", {
-        type: "geojson",
-        // @ts-ignore
-        data: cases,
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 50,
-      });
-
       mapRef.current.addSource("provinces", {
         type: "geojson",
         // @ts-ignore
@@ -136,86 +126,97 @@ function MapView() {
           "line-width": 2,
         },
       });
+    });
+  }
 
-      mapRef.current.addLayer({
-        id: "unclustered-point",
-        type: "circle",
-        source: "cases",
-        filter: ["!", ["has", "point_count"]],
-        paint: {
-          "circle-color": "#11b4da",
-          "circle-radius": 5,
-          "circle-stroke-width": 1,
-          "circle-stroke-color": "#fff",
-        },
+  function initCases(cases: any) {
+    mapRef.current.addSource("cases", {
+      type: "geojson",
+      // @ts-ignore
+      data: cases,
+      cluster: true,
+      clusterMaxZoom: 14,
+      clusterRadius: 50,
+    });
+
+    mapRef.current.addLayer({
+      id: "unclustered-point",
+      type: "circle",
+      source: "cases",
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-color": "#11b4da",
+        "circle-radius": 5,
+        "circle-stroke-width": 1,
+        "circle-stroke-color": "#fff",
+      },
+    });
+
+    mapRef.current.addLayer({
+      id: "clusters",
+      type: "circle",
+      source: "cases",
+      filter: ["has", "point_count"],
+      paint: {
+        "circle-color": ["step", ["get", "point_count"], "#f1f075", 100, "#f19a75", 750, "#f28cb1"],
+        "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+      },
+    });
+
+    mapRef.current.addLayer({
+      id: "cluster-count",
+      type: "symbol",
+      source: "cases",
+      filter: ["has", "point_count"],
+      layout: {
+        "text-field": "{point_count_abbreviated}",
+        "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+        "text-size": 12,
+      },
+    });
+
+    mapRef.current.on("click", "clusters", e => {
+      let features = mapRef.current.queryRenderedFeatures(e.point, {
+        layers: ["clusters"],
       });
-
-      mapRef.current.addLayer({
-        id: "clusters",
-        type: "circle",
-        source: "cases",
-        filter: ["has", "point_count"],
-        paint: {
-          "circle-color": ["step", ["get", "point_count"], "#f1f075", 100, "#f19a75", 750, "#f28cb1"],
-          "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
-        },
-      });
-
-      mapRef.current.addLayer({
-        id: "cluster-count",
-        type: "symbol",
-        source: "cases",
-        filter: ["has", "point_count"],
-        layout: {
-          "text-field": "{point_count_abbreviated}",
-          "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-          "text-size": 12,
-        },
-      });
-
-      mapRef.current.on("click", "clusters", e => {
-        let features = mapRef.current.queryRenderedFeatures(e.point, {
-          layers: ["clusters"],
+      let clusterId = features[0].properties?.cluster_id;
+      let caseSource: any = mapRef.current.getSource("cases");
+      caseSource.getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
+        if (err) return;
+        mapRef.current.easeTo({
+          // @ts-ignore
+          center: features[0].geometry.coordinates,
+          zoom: zoom,
         });
-        let clusterId = features[0].properties?.cluster_id;
-        let caseSource: any = mapRef.current.getSource("cases");
-        caseSource.getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
-          if (err) return;
-          mapRef.current.easeTo({
-            // @ts-ignore
-            center: features[0].geometry.coordinates,
-            zoom: zoom,
-          });
-        });
       });
+    });
 
-      mapRef.current.on("click", "unclustered-point", e => {
-        // @ts-ignore
-        let coordinates = e.features?.[0].geometry.coordinates.slice();
-        let props = e.features?.[0].properties;
-        new mapboxgl.Popup()
-          .setLngLat(coordinates)
-          .setHTML(
-            `
+    mapRef.current.on("click", "unclustered-point", e => {
+      // @ts-ignore
+      let coordinates = e.features?.[0].geometry.coordinates.slice();
+      let props = e.features?.[0].properties;
+      new mapboxgl.Popup()
+        .setLngLat(coordinates)
+        .setHTML(
+          `
                 Location: ${props?.residence}
                 `,
-          )
-          .addTo(mapRef.current);
-      });
+        )
+        .addTo(mapRef.current);
+    });
 
-      mapRef.current.on("mouseenter", "clusters", () => {
-        mapRef.current.getCanvas().style.cursor = "pointer";
-      });
+    mapRef.current.on("mouseenter", "clusters", () => {
+      mapRef.current.getCanvas().style.cursor = "pointer";
+    });
 
-      mapRef.current.on("mouseleave", "clusters", () => {
-        mapRef.current.getCanvas().style.cursor = "";
-      });
+    mapRef.current.on("mouseleave", "clusters", () => {
+      mapRef.current.getCanvas().style.cursor = "";
     });
   }
 
   return (
-    <div className="map-container mb-5">
-      <Card className="mb-3 m-5">
+    <div className="map-container mt-4 mb-5">
+      <Card className="mb-3 mx-5">
         <CardHeader className="text-muted text-left text-uppercase">Cases Map</CardHeader>
         <CardBody className="p-0">
           <div className="map" ref={el => (mapContainerRef.current = el)} />
