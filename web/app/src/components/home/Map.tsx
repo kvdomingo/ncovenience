@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import mapboxgl, { Map } from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { MDBCard as Card, MDBCardBody as CardBody, MDBCardHeader as CardHeader } from "mdbreact";
 import api from "../../api";
 import "./Map.css";
 
-const { REACT_APP_MAPBOX_ACCESS_TOKEN } = process.env;
+const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN ?? "";
 
 function MapView() {
-  mapboxgl.accessToken = REACT_APP_MAPBOX_ACCESS_TOKEN ?? "";
   const [mapState, setMapState] = useState({
     lng: 121,
     lat: 12.5,
@@ -199,8 +201,8 @@ function MapView() {
         .setLngLat(coordinates)
         .setHTML(
           `
-                Location: ${props?.residence}
-                `,
+          Location: ${props?.residence}
+          `,
         )
         .addTo(mapRef.current);
     });

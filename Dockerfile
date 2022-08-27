@@ -28,11 +28,16 @@ ENTRYPOINT ["gunicorn", "ncovenience.wsgi", "-b", "0.0.0.0:5000", "-c", "./gunic
 
 FROM node:16-alpine as build
 
+ARG _REACT_APP_MAPBOX_ACCESS_TOKEN=$_REACT_APP_MAPBOX_ACCESS_TOKEN
+ENV REACT_APP_MAPBOX_ACCESS_TOKEN $_REACT_APP_MAPBOX_ACCESS_TOKEN
+
 WORKDIR /web
 
 COPY ./web/app/public/ ./public/
 COPY ./web/app/src/ ./src/
 COPY ./web/app/package.json ./web/app/tsconfig.json ./web/app/yarn.lock ./
+
+RUN echo "REACT_APP_MAPBOX_ACCESS_TOKEN=$REACT_APP_MAPBOX_ACCESS_TOKEN" > ./.env
 
 RUN yarn install
 
