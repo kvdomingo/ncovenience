@@ -2,9 +2,16 @@ import json
 
 from flask import Blueprint
 
+from ncovenience.config import MAPBOX_ACCESS_TOKEN
+
 from . import data, serialize, utils
 
 api = Blueprint("api", __name__, url_prefix="/api")
+
+
+@api.route("/token")
+def token():
+    return {"token": MAPBOX_ACCESS_TOKEN}
 
 
 @api.route("/cases")

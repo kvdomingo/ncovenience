@@ -2,36 +2,39 @@ import axios from "axios";
 
 const baseURL = "/api";
 
-const axiosInstance = axios.create({ baseURL });
+const axi = axios.create({ baseURL });
 
 const api = {
   data: {
+    token() {
+      return axi.get("/token");
+    },
     getProvinces() {
       return axios.get("https://raw.githubusercontent.com/macoymejia/geojsonph/master/Province/Provinces.json");
     },
     cases() {
-      return axiosInstance.get("/cases");
+      return axi.get("/cases");
     },
     numbers() {
-      return axiosInstance.get("/numbers");
+      return axi.get("/numbers");
     },
     counts() {
-      return axiosInstance.get("/counts");
+      return axi.get("/counts");
     },
     timePlot() {
-      return axiosInstance.get("/time-plot");
+      return axi.get("/time-plot");
     },
     worldPlot() {
-      return axiosInstance.get("/world-plot");
+      return axi.get("/world-plot");
     },
     deltaPlot() {
-      return axiosInstance.get("/delta-plot");
+      return axi.get("/delta-plot");
     },
     agePlot() {
-      return axiosInstance.get("/age-plot");
+      return axi.get("/age-plot");
     },
     metroPlot() {
-      return axiosInstance.get("/metro-plot");
+      return axi.get("/metro-plot");
     },
   },
 };

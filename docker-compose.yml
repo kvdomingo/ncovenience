@@ -24,7 +24,6 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling
       - WDS_SOCKET_PORT=0
-      - REACT_APP_MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
     volumes:
       - ./web/app:/web
 

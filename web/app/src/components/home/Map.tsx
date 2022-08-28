@@ -7,11 +7,13 @@ import { MDBCard as Card, MDBCardBody as CardBody, MDBCardHeader as CardHeader }
 import api from "../../api";
 import "./Map.css";
 
-const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+interface MapViewProps {
+  token: string;
+}
 
-mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN ?? "";
+function MapView({ token }: MapViewProps) {
+  mapboxgl.accessToken = token;
 
-function MapView() {
   const [mapState, setMapState] = useState({
     lng: 121,
     lat: 12.5,
