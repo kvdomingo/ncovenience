@@ -1,3 +1,4 @@
+import numpy as np
 from numpy import arange, diff, nan, round
 from pandas import Series, cut
 
@@ -221,17 +222,17 @@ def get_plot_by_age():
 
     conf_age_norm = (
         round(conf_by_age / total_age_2010 * 100000)
-        .rename(lambda x: "-".join(x.strip("[").strip(")").split(", ")))
+        .rename(lambda x: "-".join(str(x).strip("[").strip(")").split(", ")))
         .rename(index={"80-85": "80+"})
     )
     recov_age_norm = (
         round(recov_by_age / total_age_2010 * 100000)
-        .rename(lambda x: "-".join(x.strip("[").strip(")").split(", ")))
+        .rename(lambda x: "-".join(str(x).strip("[").strip(")").split(", ")))
         .rename(index={"80-85": "80+"})
     )
     death_age_norm = (
         round(death_by_age / total_age_2010 * 100000)
-        .rename(lambda x: "-".join(x.strip("[").strip(")").split(", ")))
+        .rename(lambda x: "-".join(str(x).strip("[").strip(")").split(", ")))
         .rename(index={"80-85": "80+"})
     )
 
@@ -240,17 +241,17 @@ def get_plot_by_age():
         "datasets": [
             {
                 "label": "Confirmed",
-                "data": [int(v) for v in conf_age_norm.values],
+                "data": [0 if np.isnan(v) else int(v) for v in conf_age_norm.values],
                 "backgroundColor": bs4_warning,
             },
             {
                 "label": "Recovered",
-                "data": [int(v) for v in recov_age_norm.values],
+                "data": [0 if np.isnan(v) else int(v) for v in recov_age_norm.values],
                 "backgroundColor": bs4_success,
             },
             {
                 "label": "Deceased",
-                "data": [int(v) for v in death_age_norm.values],
+                "data": [0 if np.isnan(v) else int(v) for v in death_age_norm.values],
                 "backgroundColor": bs4_danger,
             },
         ],
