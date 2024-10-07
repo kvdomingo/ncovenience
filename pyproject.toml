@@ -21,6 +21,7 @@ Flask-Caching = "^2.3.0"
 loguru = "^0.7.2"
 matplotlib = "^3.9.2"
 quart = {extras = ["dotenv"], version = "^0.19.6"}
+hypercorn = "^0.17.3"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.9"

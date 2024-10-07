@@ -1,3 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
-gunicorn -b 0.0.0.0:$PORT -c ./gunicorn.conf.py
+set -euxo pipefail
+
+exec poetry run hypercorn --config hypercorn.toml

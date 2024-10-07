@@ -54,6 +54,7 @@ COPY ./ncovenience/ ./ncovenience/
 COPY ./phcovid/ ./phcovid/
 COPY ./*.py ./
 COPY ./*.sh ./
+COPY hypercorn.toml .
 COPY --from=build /web/dist ./ui/
 
 RUN chmod +x docker-entrypoint.sh
