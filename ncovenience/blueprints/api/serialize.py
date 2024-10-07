@@ -21,43 +21,67 @@ def get_plot_over_time():
 
     time_conf_keys = time_conf_unique.keys()[2:]
     time_conf_vals = (
-        time_conf_unique.query("`Country/Region` == 'Philippines'")[time_conf_unique.keys()[2:]].sum().values
+        time_conf_unique.query("`Country/Region` == 'Philippines'")[
+            time_conf_unique.keys()[2:]
+        ]
+        .sum()
+        .values
     )
 
     time_recov_keys = time_recov_unique.keys()[2:]
     time_recov_vals = (
-        time_recov_unique.query("`Country/Region` == 'Philippines'")[time_conf_unique.keys()[2:]].sum().values
+        time_recov_unique.query("`Country/Region` == 'Philippines'")[
+            time_conf_unique.keys()[2:]
+        ]
+        .sum()
+        .values
     )
 
     time_dead_keys = time_recov_unique.keys()[2:]
     time_dead_vals = (
-        time_dead_unique.query("`Country/Region` == 'Philippines'")[time_conf_unique.keys()[2:]].sum().values
+        time_dead_unique.query("`Country/Region` == 'Philippines'")[
+            time_conf_unique.keys()[2:]
+        ]
+        .sum()
+        .values
     )
 
     time_active_keys = time_conf_keys.copy()
     time_active_vals = time_conf_vals - time_recov_vals - time_dead_vals
 
     datasets = [
-        dict(
-            label="Confirmed",
-            data=[dict(x=k, y=int(v)) for k, v in zip(list(time_conf_keys), time_conf_vals)],
-            borderColor=bs4_warning,
-        ),
-        dict(
-            label="Active",
-            data=[dict(x=k, y=int(v)) for k, v in zip(list(time_active_keys), time_active_vals)],
-            borderColor=bs4_primary,
-        ),
-        dict(
-            label="Recovered",
-            data=[dict(x=k, y=int(v)) for k, v in zip(list(time_recov_keys), time_recov_vals)],
-            borderColor=bs4_success,
-        ),
-        dict(
-            label="Deceased",
-            data=[dict(x=k, y=int(v)) for k, v in zip(list(time_dead_keys), time_dead_vals)],
-            borderColor=bs4_danger,
-        ),
+        {
+            "label": "Confirmed",
+            "data": [
+                {"x": k, "y": int(v)}
+                for k, v in zip(list(time_conf_keys), time_conf_vals, strict=False)
+            ],
+            "borderColor": bs4_warning,
+        },
+        {
+            "label": "Active",
+            "data": [
+                {"x": k, "y": int(v)}
+                for k, v in zip(list(time_active_keys), time_active_vals, strict=False)
+            ],
+            "borderColor": bs4_primary,
+        },
+        {
+            "label": "Recovered",
+            "data": [
+                {"x": k, "y": int(v)}
+                for k, v in zip(list(time_recov_keys), time_recov_vals, strict=False)
+            ],
+            "borderColor": bs4_success,
+        },
+        {
+            "label": "Deceased",
+            "data": [
+                {"x": k, "y": int(v)}
+                for k, v in zip(list(time_dead_keys), time_dead_vals, strict=False)
+            ],
+            "borderColor": bs4_danger,
+        },
     ]
 
     return datasets
@@ -82,21 +106,30 @@ def get_delta_over_time():
     dead_time = ph_time.copy().columns
 
     datasets = [
-        dict(
-            label="Confirmed",
-            data=[dict(x=k, y=int(v)) for k, v in zip(list(conf_time), delta_conf)],
-            borderColor=bs4_warning,
-        ),
-        dict(
-            label="Recovered",
-            data=[dict(x=k, y=int(v)) for k, v in zip(list(recov_time), delta_recov)],
-            borderColor=bs4_success,
-        ),
-        dict(
-            label="Deceased",
-            data=[dict(x=k, y=int(v)) for k, v in zip(list(dead_time), delta_dead)],
-            borderColor=bs4_danger,
-        ),
+        {
+            "label": "Confirmed",
+            "data": [
+                {"x": k, "y": int(v)}
+                for k, v in zip(list(conf_time), delta_conf, strict=False)
+            ],
+            "borderColor": bs4_warning,
+        },
+        {
+            "label": "Recovered",
+            "data": [
+                {"x": k, "y": int(v)}
+                for k, v in zip(list(recov_time), delta_recov, strict=False)
+            ],
+            "borderColor": bs4_success,
+        },
+        {
+            "label": "Deceased",
+            "data": [
+                {"x": k, "y": int(v)}
+                for k, v in zip(list(dead_time), delta_dead, strict=False)
+            ],
+            "borderColor": bs4_danger,
+        },
     ]
 
     return datasets
@@ -117,37 +150,51 @@ def get_world_over_time():
     world_dead = time_dead_unique.sum() / 1e6
 
     datasets = [
-        dict(
-            label="Confirmed",
-            data=[dict(x=k, y=float(v)) for k, v in zip(list(time_conf_unique), world_conf)],
-            borderColor=bs4_warning,
-        ),
-        dict(
-            label="Recovered",
-            data=[dict(x=k, y=float(v)) for k, v in zip(list(time_recov_unique), world_recov)],
-            borderColor=bs4_success,
-        ),
-        dict(
-            label="Deceased",
-            data=[dict(x=k, y=float(v)) for k, v in zip(list(time_dead_unique), world_dead)],
-            borderColor=bs4_danger,
-        ),
+        {
+            "label": "Confirmed",
+            "data": [
+                {"x": k, "y": float(v)}
+                for k, v in zip(list(time_conf_unique), world_conf, strict=False)
+            ],
+            "borderColor": bs4_warning,
+        },
+        {
+            "label": "Recovered",
+            "data": [
+                {"x": k, "y": float(v)}
+                for k, v in zip(list(time_recov_unique), world_recov, strict=False)
+            ],
+            "borderColor": bs4_success,
+        },
+        {
+            "label": "Deceased",
+            "data": [
+                {"x": k, "y": float(v)}
+                for k, v in zip(list(time_dead_unique), world_dead, strict=False)
+            ],
+            "borderColor": bs4_danger,
+        },
     ]
     return datasets
 
 
 def get_plot_by_age():
     ph_conf = get_phcovid()
-    categories = ["", "Recovered", "Died"]
     conf_by_age = ph_conf.query("`status` == ''").age
-    conf_by_age = conf_by_age.groupby(cut(conf_by_age, arange(0, 86, 5), right=False)).count()
-    conf_by_age.index = conf_by_age.index.to_native_types()
+    conf_by_age = conf_by_age.groupby(
+        cut(conf_by_age, arange(0, 86, 5), right=False)
+    ).count()
+    conf_by_age.index = conf_by_age.index
     recov_by_age = ph_conf.query("`status` == 'Recovered'").age
-    recov_by_age = recov_by_age.groupby(cut(recov_by_age, arange(0, 86, 5), right=False)).count()
-    recov_by_age.index = recov_by_age.index.to_native_types()
+    recov_by_age = recov_by_age.groupby(
+        cut(recov_by_age, arange(0, 86, 5), right=False)
+    ).count()
+    recov_by_age.index = recov_by_age.index.astype(str)
     death_by_age = ph_conf.query("`status` == 'Died'").age
-    death_by_age = death_by_age.groupby(cut(death_by_age, arange(0, 86, 5), right=False)).count()
-    death_by_age.index = death_by_age.index.to_native_types()
+    death_by_age = death_by_age.groupby(
+        cut(death_by_age, arange(0, 86, 5), right=False)
+    ).count()
+    death_by_age.index = death_by_age.index.astype(str)
 
     total_age_2010 = {
         "[0, 5)": 1166028,
@@ -168,7 +215,9 @@ def get_plot_by_age():
         "[75, 80)": 68749,
         "[80, 85)": 62203,
     }
-    total_age_2010 = Series(index=list(total_age_2010.keys()), data=list(total_age_2010.values()))
+    total_age_2010 = Series(
+        index=list(total_age_2010.keys()), data=list(total_age_2010.values())
+    )
 
     conf_age_norm = (
         round(conf_by_age / total_age_2010 * 100000)
@@ -186,26 +235,26 @@ def get_plot_by_age():
         .rename(index={"80-85": "80+"})
     )
 
-    data = dict(
-        labels=list(conf_age_norm.index),
-        datasets=[
-            dict(
-                label="Confirmed",
-                data=[int(v) for v in conf_age_norm.values],
-                backgroundColor=bs4_warning,
-            ),
-            dict(
-                label="Recovered",
-                data=[int(v) for v in recov_age_norm.values],
-                backgroundColor=bs4_success,
-            ),
-            dict(
-                label="Deceased",
-                data=[int(v) for v in death_age_norm.values],
-                backgroundColor=bs4_danger,
-            ),
+    data = {
+        "labels": list(conf_age_norm.index),
+        "datasets": [
+            {
+                "label": "Confirmed",
+                "data": [int(v) for v in conf_age_norm.values],
+                "backgroundColor": bs4_warning,
+            },
+            {
+                "label": "Recovered",
+                "data": [int(v) for v in recov_age_norm.values],
+                "backgroundColor": bs4_success,
+            },
+            {
+                "label": "Deceased",
+                "data": [int(v) for v in death_age_norm.values],
+                "backgroundColor": bs4_danger,
+            },
         ],
-    )
+    }
     return data
 
 
@@ -259,30 +308,32 @@ def get_metro_cases():
         "Taguig City": 804915,
     }
 
-    metro_pop = Series(data=list(metro_pop_2015.values()), index=list(metro_pop_2015.keys()))
+    metro_pop = Series(
+        data=list(metro_pop_2015.values()), index=list(metro_pop_2015.keys())
+    )
 
     metro_conf_norm = round(metro_city_cases / metro_pop * 100000).replace(nan, 0)
     metro_recov_norm = round(metro_city_recov / metro_pop * 100000).replace(nan, 0)
     metro_dead_norm = round(metro_city_death / metro_pop * 100000).replace(nan, 0)
 
-    data = dict(
-        labels=list(metro_conf_norm.index),
-        datasets=[
-            dict(
-                label="Confirmed",
-                data=[int(v) for v in metro_conf_norm.values],
-                backgroundColor=bs4_warning,
-            ),
-            dict(
-                label="Recovered",
-                data=[int(v) for v in metro_recov_norm.values],
-                backgroundColor=bs4_success,
-            ),
-            dict(
-                label="Deceased",
-                data=[int(v) for v in metro_dead_norm.values],
-                backgroundColor=bs4_danger,
-            ),
+    data = {
+        "labels": list(metro_conf_norm.index),
+        "datasets": [
+            {
+                "label": "Confirmed",
+                "data": [int(v) for v in metro_conf_norm.values],
+                "backgroundColor": bs4_warning,
+            },
+            {
+                "label": "Recovered",
+                "data": [int(v) for v in metro_recov_norm.values],
+                "backgroundColor": bs4_success,
+            },
+            {
+                "label": "Deceased",
+                "data": [int(v) for v in metro_dead_norm.values],
+                "backgroundColor": bs4_danger,
+            },
         ],
-    )
+    }
     return data

@@ -1,16 +1,19 @@
-from pandas import json_normalize
 import re
-import pandas as pd
-import numpy as np
 from urllib.error import HTTPError
 
-from .constants import NONE_ALIAS
-from .constants import VAL_ALIAS
-from .constants import RENAME_DICT
-from .constants import DATE_COLS
-from .constants import GSHEET_TARGET_COLUMNS
-from .data_extractor import extract_arcgis_data
-from .data_extractor import extract_dsph_gsheet_data
+import numpy as np
+import pandas as pd
+from pandas import json_normalize
+
+from phcovid.constants import (
+    DATE_COLS,
+    GSHEET_TARGET_COLUMNS,
+    NONE_ALIAS,
+    RENAME_DICT,
+    VAL_ALIAS,
+)
+
+from .data_extractor import extract_arcgis_data, extract_dsph_gsheet_data
 
 
 def extract_contact_info(travel_history):
@@ -35,7 +38,12 @@ def extract_contact_info(travel_history):
         contacts.append(contacts_)
         num_contacts.append(len(contacts_))
 
-    contact_info = pd.DataFrame({"contacts": contacts, "num_contacts": num_contacts,})
+    contact_info = pd.DataFrame(
+        {
+            "contacts": contacts,
+            "num_contacts": num_contacts,
+        }
+    )
     return contact_info
 
 
@@ -138,9 +146,8 @@ def get_cases(
         df_aliased = df_renamed
 
     if getattr(df_aliased, "contacts", None):
-        if (
-            getattr(df_aliased, "travel_history", None)
-            and getattr(df_aliased, "num_contacts", None)
+        if getattr(df_aliased, "travel_history", None) and getattr(
+            df_aliased, "num_contacts", None
         ):
             df_aliased[["contacts", "num_contacts"]] = extract_contact_info(
                 df_aliased.travel_history

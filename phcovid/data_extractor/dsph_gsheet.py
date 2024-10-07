@@ -1,4 +1,5 @@
 import re
+
 import pandas as pd
 
 URL = (
@@ -33,7 +34,9 @@ def _clean_data_value(data):
     return data
 
 
-def _clean_html(soup_data=None, headers=None, valid_idx=[]):
+def _clean_html(soup_data=None, headers=None, valid_idx=None):
+    if valid_idx is None:
+        valid_idx = []
     if headers:
         soup_data = [headers]
 
@@ -61,6 +64,7 @@ def extract_dsph_gsheet_data(target_columns):
     Returns google sheets worksheet in pd.DataFrame format
     """
     from urllib.request import urlopen
+
     from bs4 import BeautifulSoup
 
     gsheet_html = urlopen(URL).read()
@@ -74,10 +78,7 @@ def extract_dsph_gsheet_data(target_columns):
     headers = _clean_html(headers=rows[0])
     id_targets = list(GSHEET_ID.keys()) + list(target_columns.keys())
     data = _extract_by_targets(headers, rows[1:], targets=id_targets)
-    id_targets_standard = (
-        list(GSHEET_ID.values())
-        + list(target_columns.values())
-    )
+    id_targets_standard = list(GSHEET_ID.values()) + list(target_columns.values())
     df = pd.DataFrame(data, columns=id_targets_standard)
 
     return df

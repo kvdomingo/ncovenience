@@ -7,8 +7,12 @@ services:
     init: true
     restart: unless-stopped
     env_file: .env
+    environment:
+      QUART_APP: ncovenience:app
+      QUART_DEBUG: True
     volumes:
       - .:/backend
+      - venv-data:/backend/.venv
     ports:
       - "8000:8000"
 
@@ -28,3 +32,6 @@ services:
       - ./ui:/web
     ports:
       - "3000:3000"
+
+volumes:
+  venv-data:

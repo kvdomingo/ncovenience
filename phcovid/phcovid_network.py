@@ -4,7 +4,7 @@ import pandas as pd
 def add_edge(s, d, curr_dict):
     """
     Adds edge between s and d in graph curr_dict
-    Note: Python uses pass by reference so this 
+    Note: Python uses pass by reference so this
     function will update curr_dict
     """
     try:
@@ -45,7 +45,7 @@ def get_case_network(df, contact_col="contacts_num", case_no_col="case_no_num"):
     """
     case_graph = get_case_graph(df, contact_col, case_no_col)
 
-    case_cnt = len(df)
+    len(df)
     visited = [False for i in range(1, max(case_graph.keys()) + 2)]
     visited_pre = [False for i in range(1, max(case_graph.keys()) + 2)]
     parent = [-1 for i in range(1, max(case_graph.keys()) + 2)]
@@ -73,7 +73,7 @@ def get_case_network(df, contact_col="contacts_num", case_no_col="case_no_num"):
                     case_network[network_cnt - 1].append(j)
 
     df_case_network = pd.DataFrame(
-        [i for i in case_network.items()], columns=["network_no", "network_cases"]
+        list(case_network.items()), columns=["network_no", "network_cases"]
     )
     df_case_network["network_num_cases"] = df_case_network["network_cases"].apply(
         lambda x: len(x)

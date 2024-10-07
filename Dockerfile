@@ -1,4 +1,4 @@
-FROM python:3.12-bullseye as base
+FROM python:3.12-bullseye AS base
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -11,42 +11,42 @@ ENV POETRY_VERSION 1.8.3
 ENV VERSION $VERSION
 ARG PORT
 
-FROM base as dev
+FROM base AS dev
 
-RUN pip install "poetry==$POETRY_VERSION"
+SHELL [ "/bin/bash", "-euxo", "pipefail", "-c" ]
+
+RUN pip install --no-cache-dir "poetry==$POETRY_VERSION"
 
 WORKDIR /backend
 
-COPY poetry.lock pyproject.toml gunicorn.conf.py ./
-
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-interaction --no-ansi
+RUN poetry config virtualenvs.create true && \
+    poetry config virtualenvs.in-project true
 
 ENV VERSION $VERSION
 
-ENTRYPOINT ["gunicorn", "ncovenience.wsgi", "-b", "0.0.0.0:5000", "-c", "./gunicorn.conf.py", "--reload"]
+ENTRYPOINT [ "/backend/docker-entrypoint.dev.sh" ]
 
-FROM node:16-alpine as build
+FROM oven/bun:1.1-alpine AS build
 
 WORKDIR /web
 
-COPY ./web/app/public/ ./public/
-COPY ./web/app/src/ ./src/
-COPY ./web/app/package.json ./web/app/tsconfig.json ./web/app/yarn.lock ./
+COPY ./ui/public/ ./public/
+COPY ./ui/src/ ./src/
+COPY ./ui/package.json ./ui/tsconfig.json ./ui/yarn.lock ./
 
-RUN yarn install
+RUN bun install && bun run build
 
-RUN yarn build
+FROM base AS prod
 
-FROM base as prod
+SHELL [ "/bin/bash", "-euxo", "pipefail", "-c" ]
 
-RUN pip install "poetry==$POETRY_VERSION"
+RUN pip install --no-cache-dir "poetry==$POETRY_VERSION"
 
 WORKDIR /tmp
 
 COPY poetry.lock pyproject.toml ./
 
-RUN poetry export --without-hashes -f requirements.txt | pip install -r /dev/stdin
+RUN poetry export --without-hashes -f requirements.txt | pip install --no-cache-dir -r /dev/stdin
 
 WORKDIR /backend
 
@@ -54,10 +54,10 @@ COPY ./ncovenience/ ./ncovenience/
 COPY ./phcovid/ ./phcovid/
 COPY ./*.py ./
 COPY ./*.sh ./
-COPY --from=build /web/build ./web/app/
+COPY --from=build /web/dist ./ui/
 
 RUN chmod +x docker-entrypoint.sh
 
 EXPOSE $PORT
 
-ENTRYPOINT [ "./docker-entrypoint.sh" ]
+ENTRYPOINT [ "/backend/docker-entrypoint.sh" ]

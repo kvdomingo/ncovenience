@@ -5,8 +5,9 @@ from urllib.error import HTTPError
 import numpy as np
 import pandas as pd
 
-from ...cache import cache
-from ...config import BASE_DIR, UNAVAILABLE_RESPONSE
+from ncovenience.cache import cache
+from ncovenience.config import BASE_DIR, UNAVAILABLE_RESPONSE
+
 from . import utils
 
 
@@ -25,8 +26,8 @@ def get_ph_confirmed():
     return ph_conf
 
 
-def get_phcovid():
-    with open(os.path.join(BASE_DIR / "ncovenience" / "data" / "latest.json"), "r") as f:
+def get_phcovid() -> pd.DataFrame:
+    with open(os.path.join(BASE_DIR / "ncovenience" / "data" / "latest.json")) as f:
         df = pd.read_json(f, orient="index").replace(np.nan, "").replace("None", "")
     return df
 
@@ -49,7 +50,7 @@ def get_ph_numbers():
         numbers_count = [pc[pc.columns[-1]].values[0] for pc in ph_cases]
         numbers_count.insert(1, numbers_count[0] - numbers_count[1] - numbers_count[2])
         numbers_count = [int(nc) for nc in numbers_count]
-        ph_numbers = dict(zip(numbers_type, numbers_count))
+        ph_numbers = dict(zip(numbers_type, numbers_count, strict=False))
         cache.set("numbers", ph_numbers)
         cache.set("confirmed", ph_numbers["confirmed"])
         return ph_numbers
@@ -70,7 +71,7 @@ def get_ph_numbers_delta():
     ]
     delta = []
 
-    for unique, name in zip(time_unique, case_names):
+    for unique, name in zip(time_unique, case_names, strict=False):
         ph_time = unique.query("`Country/Region` == 'Philippines'")
         ph_time = ph_time[ph_time.columns[4:]]
         time = ph_time.copy().columns
@@ -82,7 +83,7 @@ def get_ph_numbers_delta():
     case_names.insert(1, "active")
     delta.insert(1, delta[0] - delta[1] - delta[2])
     delta = [int(d) for d in delta]
-    return dict(zip(case_names, delta))
+    return dict(zip(case_names, delta, strict=False))
 
 
 def get_confirmed_over_time():

@@ -24,7 +24,6 @@ def check_last_updated():
     if last_updated is None:
         ph_time = confirmed.query("`Country/Region` == 'Philippines'")
         ph_time = ph_time[ph_time.columns[4:]]
-        time = ph_time.columns
         last_updated = datetime.now()
     else:
         if today_count != stored_count:
@@ -72,7 +71,11 @@ def df_to_geojson(df: pd.DataFrame, **kwargs):
                 )
 
     df.apply(insert_features, axis=1)
-    return geojson.dumps(geojson.FeatureCollection(features, separators=(",", ":")), cls=GeoJSONNATEncoder, **kwargs)
+    return geojson.dumps(
+        geojson.FeatureCollection(features, separators=(",", ":")),
+        cls=GeoJSONNATEncoder,
+        **kwargs,
+    )
 
 
 def date_to_datetime(df):
@@ -83,5 +86,7 @@ def date_to_datetime(df):
 
 def count_latest(df):
     df_unique = df.groupby("Country/Region").sum()
-    total = df_unique[df_unique.keys()[-1]][df_unique.index.tolist().index("Philippines")]
+    total = df_unique[df_unique.keys()[-1]][
+        df_unique.index.tolist().index("Philippines")
+    ]
     return total
