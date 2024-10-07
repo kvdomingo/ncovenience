@@ -33,9 +33,8 @@ function CasesLinePlot({ endpoint, cardTitle, xLabel, yLabel }: CasesLinePlotPro
         }
       };
 
-      const res = await ep();
-
       try {
+        const res = await ep();
         const dataStyle = {
           fill: false,
           pointRadius: 1,

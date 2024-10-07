@@ -31,11 +31,9 @@ function CasesBarPlot({ endpoint, cardTitle, xLabel, yLabel }: CasesBarPlotProps
         }
       };
 
-      const res = await ep();
-
       try {
-        const { labels, datasets } = res.data;
-        return { labels, datasets };
+        const res = await ep();
+        return res.data;
       } catch (e) {
         if (e instanceof AxiosError) {
           console.error(e.message);
@@ -57,7 +55,7 @@ function CasesBarPlot({ endpoint, cardTitle, xLabel, yLabel }: CasesBarPlotProps
         <CardBody className="m-0">
           {/*@ts-ignore*/}
           <HorizontalBar
-            data={query.data?.datasets ?? []}
+            data={query.data?.datasets}
             options={{
               scales: {
                 xAxes: [
@@ -72,7 +70,7 @@ function CasesBarPlot({ endpoint, cardTitle, xLabel, yLabel }: CasesBarPlotProps
                 yAxes: [
                   {
                     type: "category",
-                    labels: query.data?.labels ?? [],
+                    labels: query.data?.datasets.labels ?? [],
                     stacked: true,
                     scaleLabel: {
                       display: !!yLabel,

@@ -9,6 +9,8 @@ repos:
     rev: v0.5.0
     hooks:
       - id: biome-check
+        files: ui/.+\.(jsx?|tsx?|json|html|css)
+        args: [ --config-path, ./ui, --diagnostic-level, error ]
         additional_dependencies:
           - "@biomejs/biome@1.9.3"
   - repo: https://github.com/pre-commit/pre-commit-hooks

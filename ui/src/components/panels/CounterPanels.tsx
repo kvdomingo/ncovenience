@@ -1,7 +1,6 @@
 import { api } from "@/api";
 import Loading from "@/components/common/Loading";
 import { useQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
 import {
   MDBCard as Card,
   MDBCardBody as CardBody,
@@ -13,11 +12,7 @@ import {
   MDBTypography as Typography,
 } from "mdbreact";
 
-const Route = getRouteApi("/");
-
 function CounterPanels() {
-  const { queryClient } = Route.useRouteContext();
-
   const numbersQuery = useQuery({
     queryKey: ["numbers"],
     queryFn: api.data.numbers,
@@ -37,9 +32,9 @@ function CounterPanels() {
     { color: "danger", label: "deceased", icon: "skull-crossbones" },
   ];
 
-  return queryClient.isFetching({
-    predicate: (query) => ["counts", "numbers"].includes(query.queryKey[0] as string),
-  }) ? (
+  const loading = numbersQuery.isLoading || countsQuery.isLoading;
+
+  return loading ? (
     <Loading />
   ) : (
     <Row className="row-cols-2 mt-4 mb-2">
