@@ -1,45 +1,30 @@
-version: "3.8"
-
-networks:
-  gateway:
-    external: true
-
 services:
   backend:
     build:
       context: .
       target: dev
     image: kvdomingo/ncovenience-api:latest
+    init: true
+    restart: unless-stopped
     env_file: .env
     volumes:
       - .:/backend
+    ports:
+      - "8000:8000"
 
   frontend:
-    build: ./web/app
-    image: kvdomingo/ncovenience-app:latest
-    environment:
-      - HOST=0.0.0.0
-      - PORT=3000
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-      - TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling
-      - WDS_SOCKET_PORT=0
-    volumes:
-      - ./web/app:/web
-
-  proxy:
-    image: bitnami/nginx:latest
-    environment:
-      - NGINX_HTTP_PORT_NUMBER=${HTTP_PORT}
-    volumes:
-      - ./proxy/nginx.conf:/opt/bitnami/nginx/conf/server_blocks/ncovenience.conf:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ncovenience.rule=Host(`ncovenience.localhost`)"
-      - "traefik.http.routers.ncovenience.entrypoints=http"
-      - "traefik.docker.network=gateway"
-      - "traefik.http.services.ncovenience.loadbalancer.server.port=${HTTP_PORT}"
+    image: oven/bun:1.1-alpine
+    init: true
     restart: unless-stopped
-    networks:
-      - default
-      - gateway
+    environment:
+      NODE_ENV: development
+    env_file: .env
+    entrypoint:
+      - /bin/sh
+      - -c
+      - bun install && exec bun run dev
+    working_dir: /web
+    volumes:
+      - ./ui:/web
+    ports:
+      - "3000:3000"

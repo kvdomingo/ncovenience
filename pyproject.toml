@@ -2,33 +2,33 @@
 name = "ncovenience"
 version = "1.1.0"
 description = ""
-authors = ["Kenneth V. Domingo <hello@kvdomingo.xyz>"]
+authors = ["Kenneth V. Domingo <hello@kvd.studio>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-beautifulsoup4 = "^4.11.1"
-geojson = "^2.5.0"
-gunicorn = {extras = ["gthread"], version = "^20.1.0"}
-numpy = "^1.23.2"
-pandas = "^1.4.3"
-Pillow = "^9.2.0"
-python-dotenv = "^0.20.0"
-requests = "^2.28.1"
-whitenoise = "^6.2.0"
+python = "^3.12"
+beautifulsoup4 = "^4.12.3"
+geojson = "^3.1.0"
+gunicorn = { extras = ["gthread"], version = "^23.0.0" }
+numpy = "^2.1.2"
+pandas = "^2.2.3"
+Pillow = "^10.4.0"
+python-dotenv = "^1.0.1"
+requests = "^2.32.3"
+whitenoise = "^6.7.0"
 Flask = "^2.2.2"
 Flask-Caching = "^2.0.1"
-loguru = "^0.6.0"
-matplotlib = "^3.5.3"
+loguru = "^0.7.2"
+matplotlib = "^3.9.2"
 
 [tool.poetry.dev-dependencies]
-black = "^22.6.0"
-isort = "^5.10.1"
+black = "^24.8.0"
+isort = "^5.13.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-target-version = ['py310']
+target-version = ['py312']
 line-length = 120
